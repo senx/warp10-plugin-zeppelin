@@ -1,0 +1,14 @@
+[
+  {
+    "group": "WarpScript",
+    "name": "WarpScript",
+    "className": "io.warp10.zeppelin.WarpScriptInterpreter",
+    "properties": {
+      "props1": { "warp.timeunits":   "us" }
+    },
+    "editor": {
+      "language": "sh",
+      "editOnDblClick": false
+    }
+  }
+]
