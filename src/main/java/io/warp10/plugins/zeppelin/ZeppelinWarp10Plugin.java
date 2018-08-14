@@ -8,8 +8,6 @@ import java.util.Properties;
 import org.apache.thrift.TException;
 import org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer;
 
-import io.warp10.script.WarpScriptLib;
-import io.warp10.script.ext.zeppelin.ZeppelinWarpScriptExtension;
 import io.warp10.warp.sdk.AbstractWarp10Plugin;
 
 public class ZeppelinWarp10Plugin extends AbstractWarp10Plugin {
