@@ -53,7 +53,7 @@ configurations {
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     provided 'org.slf4j:slf4j-api:1.7.13'
-    provided 'io.warp10:warpscript:1.2.22'
+    provided 'io.warp10:warpscript:1.2.21'
 
     compile 'org.apache.zeppelin:zeppelin-interpreter:0.8.0'
 
