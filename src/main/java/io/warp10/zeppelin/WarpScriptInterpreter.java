@@ -2,7 +2,6 @@ package io.warp10.zeppelin;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +77,7 @@ public class WarpScriptInterpreter extends Interpreter {
     // Override properties with those from the interpreter
     properties.putAll(this.properties);
     
-    //MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), properties);
-    MemoryWarpScriptStack stack = new MemoryWarpScriptStack(null, null, properties);
+    MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), properties);
     
     if ("true".equals(properties.getProperty(ZeppelinWarp10Plugin.ZEPPELIN_STACK_MAXLIMITS))) {
       stack.maxLimits();
