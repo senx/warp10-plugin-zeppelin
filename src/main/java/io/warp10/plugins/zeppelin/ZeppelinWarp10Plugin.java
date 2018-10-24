@@ -51,7 +51,7 @@ public class ZeppelinWarp10Plugin extends AbstractWarp10Plugin {
       for (Entry<Object,Object> entry: props.entrySet()) {
         properties.put(entry.getKey().toString(), entry.getKey().toString());
       }
-      
+      ri.setDaemon(true);
       ri.start();
       ri.setName("[WarpScript Zeppelin Remote Interpreter on port " + ri.getPort() + "]");
     } catch (Exception e) {
