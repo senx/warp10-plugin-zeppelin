@@ -35,17 +35,9 @@ repositories {
     maven {
       url 'https://dl.bintray.com/hbs/maven'
     }
-
-    maven {
-      url 'https://bintray.com/yahoo/maven'
-    }
         
     maven {
       url "http://nexus.bedatadriven.com/content/groups/public/"
-    }
-    
-    maven {
-      url "http://repo.opengeo.org/"
     }
         
     maven {
@@ -96,6 +88,7 @@ shadowJar {
   }
   dependencies {
     exclude(dependency('io.warp10:warpscript:'))
+    exclude(dependency('org.slf4j::'))
   }
 }
 
