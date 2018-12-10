@@ -40,18 +40,6 @@ repositories {
       url 'https://bintray.com/yahoo/maven'
     }
         
-    maven {
-      url "http://nexus.bedatadriven.com/content/groups/public/"
-    }
-    
-    maven {
-      url "http://repo.opengeo.org/"
-    }
-        
-    maven {
-      url 'https://repository.apache.org/content/groups/public'
-    }
-
     mavenCentral()
     
     mavenLocal()
