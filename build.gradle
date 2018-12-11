@@ -35,15 +35,11 @@ repositories {
     maven {
       url 'https://dl.bintray.com/hbs/maven'
     }
-        
-    maven {
-      url "http://nexus.bedatadriven.com/content/groups/public/"
-    }
-        
-    maven {
-      url 'https://repository.apache.org/content/groups/public'
-    }
 
+    maven {
+      url 'https://bintray.com/yahoo/maven'
+    }
+        
     mavenCentral()
     
     mavenLocal()
@@ -61,7 +57,7 @@ configurations {
 dependencies {
     // The production code uses the SLF4J logging API at compile time
     provided 'org.slf4j:slf4j-api:1.7.13'
-    provided 'io.warp10:warpscript:1.2.28'
+    provided 'io.warp10:warpscript:2.0.1'
 
     compile 'org.apache.zeppelin:zeppelin-interpreter:0.8.0'
 

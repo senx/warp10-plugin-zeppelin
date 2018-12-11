@@ -39,17 +39,14 @@ import io.warp10.script.ext.zeppelin.ZeppelinWarpScriptExtension;
 
 public class WarpScriptInterpreter extends Interpreter {
 
-  private static final String PROP_WARP10_CONFIG = "warp10.config";
-  private static final String ENV_WARP10_CONFIG = "WARP10_CONFIG";
-  
   private Properties properties;
   
   static {
     try {
-      if (null != System.getProperty(PROP_WARP10_CONFIG)) {
-        WarpConfig.safeSetProperties(System.getProperty(PROP_WARP10_CONFIG));        
-      } else if (null != System.getenv(ENV_WARP10_CONFIG)) {
-        WarpConfig.safeSetProperties(System.getenv(ENV_WARP10_CONFIG));
+      if (null != System.getProperty(WarpConfig.WARP10_CONFIG)) {
+        WarpConfig.safeSetProperties(System.getProperty(WarpConfig.WARP10_CONFIG));
+      } else if (null != System.getenv(WarpConfig.WARP10_CONFIG_ENV)) {
+        WarpConfig.safeSetProperties(System.getenv(WarpConfig.WARP10_CONFIG_ENV));
       } else {
         WarpConfig.safeSetProperties((String) null);
       }
