@@ -35,10 +35,6 @@ repositories {
     maven {
       url 'https://dl.bintray.com/hbs/maven'
     }
-
-    maven {
-      url 'https://bintray.com/yahoo/maven'
-    }
         
     mavenCentral()
     
