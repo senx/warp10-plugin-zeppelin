@@ -1,0 +1,13 @@
+{
+  "type": "plugin",
+  "group": "io.warp10",
+  "artifact": "warp10-plugin-zeppelin",
+  "version": "0.1.0",
+  "description": "Integrating Warp 10™ with Apache Zeppelin",
+  "author": "SenX",
+  "email": "contact@senx.io",
+  "license": "Apache-2",
+  "git": "https://github.com/senx/warp10-plugin-zeppelin",
+  "tags": "warp 10, data science",
+  "repoUrl": "http://localhost:8085/repository/maven-releases/"
+}

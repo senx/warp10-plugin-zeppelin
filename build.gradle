@@ -19,8 +19,39 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'com.github.johnrengelman.shadow' version '1.2.3'
+    id 'idea'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.8.1'
 }
 
+// ------------------------------------------------------------------
+//                    AUTO RELEASE MANAGEMENT
+// Gets the version name from the latest Git tag
+// if no commit occurs -> the name of the tag likes 0.0.1
+// if commit occurs -> 0.0.1-12-aabb1122 (number of commits + version number)
+// ------------------------------------------------------------------
+def getVersionName(String revision) {
+  String newRevision = revision
+
+  if (!revision.endsWith('SNAPSHOT')) {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'describe', '--tags', '--always'
+      standardOutput = stdout
+    }
+    newRevision = stdout.toString().trim()
+  }
+  return newRevision
+}
+
+project.ext.bintrayRepo = 'REPO'
+project.ext.bintrayVcsUrl = 'VCS URL'
+project.ext.bintrayLicenses = [ 'LICENSE' ]
+project.ext.group = 'io.warp10'
+project.ext.name = 'warp10-plugin-zeppelin'
+project.ext.uberjar = null != System.getProperty('uberjar')
+project.ext.version = getVersionName('0.0.1') + (project.ext.uberjar ? '-uberjar' : '')
+version project.ext.version
 // In this section you declare where to find the dependencies of your project
 repositories {
     // flatDir name:'ExternalJars', dirs:'./lib'
@@ -70,13 +101,23 @@ sourceSets {
     compileClasspath = compileClasspath + configurations.provided
   }
 }
+// for IntelliJ users
+idea {
+  module {
+    scopes.PROVIDED.plus += [configurations.provided]
+  }
+}
 
 shadowJar {
   zip64 = true
   classifier = ''
   manifest {
     attributes("Implementation-Title": "Warp 10 Zeppelin Plugin")
-    attributes("Implementation-Version": "0.0.1")
+    attributes("Implementation-Version": project.ext.version)
+    attributes('WarpFleet-Description': 'Integrating Warp 10™ with Apache Zeppelin')
+    attributes('WarpFleet-Group': project.ext.group )
+    attributes('WarpFleet-Artifact': project.ext.name)
+    attributes('WarpFleet-Version': project.ext.version)
   }
   dependencies {
     exclude(dependency('io.warp10:warpscript:'))
@@ -99,8 +140,43 @@ task shadowJarFull(type: com.github.jengelman.gradle.plugins.shadow.tasks.Shadow
   }
 }
 
+// Task for building the sources jar
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allJava
+}
+
 eclipse {
   classpath {
     plusConfigurations += [ configurations.provided ]
+  }
+}
+
+
+bintray {
+  dryRun = false
+
+  user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+  key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+
+  publications = project.ext.uberjar ? [ 'uberjar' ] : ['stdjar' ]
+  publish = false
+
+  pkg {
+
+    repo = project.ext.bintrayRepo
+    name = project.ext.name
+
+    if (project.hasProperty('bintrayUserOrg') || null != System.getenv('BINTRAY_USERORG')) {
+      userOrg = project.hasProperty('bintrayUserOrg') ? project.property('bintrayUserOrg') : System.getenv('BINTRAY_USERORG')
+    }
+
+    vcsUrl = project.ext.bintrayVcsUrl
+    licenses = project.ext.bintrayLicenses
+
+    version {
+      version = version
+      released = new Date()
+    }
   }
 }
