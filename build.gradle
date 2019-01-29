@@ -15,13 +15,12 @@
 //
 
 plugins {
-  id 'java'
-  id 'com.github.johnrengelman.shadow' version '4.0.3'
-  id 'eclipse'
-  id 'idea'
-  id 'signing'
-  id 'maven-publish'
-  id 'com.jfrog.bintray' version '1.8.1'
+    id 'java'
+    id 'eclipse'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+    id 'idea'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.8.1'
 }
 
 // ------------------------------------------------------------------
@@ -33,11 +32,53 @@ plugins {
 def getVersionName(String revision) {
   String newRevision = revision
 
+<<<<<<< HEAD
   if (null == System.getProperty("nogit") && !revision.endsWith('SNAPSHOT')) {
+=======
+  if (!revision.endsWith('SNAPSHOT')) {
+>>>>>>> dfab0a9 (wip)
     def stdout = new ByteArrayOutputStream()
     exec {
       commandLine 'git', 'describe', '--tags', '--always'
       standardOutput = stdout
+<<<<<<< HEAD
+=======
+    }
+    newRevision = stdout.toString().trim()
+  }
+  return newRevision
+}
+
+project.ext.bintrayRepo = 'REPO'
+project.ext.bintrayVcsUrl = 'VCS URL'
+project.ext.bintrayLicenses = [ 'LICENSE' ]
+project.ext.group = 'io.warp10'
+project.ext.name = 'warp10-plugin-zeppelin'
+project.ext.uberjar = null != System.getProperty('uberjar')
+project.ext.version = getVersionName('0.0.1') + (project.ext.uberjar ? '-uberjar' : '')
+version project.ext.version
+// In this section you declare where to find the dependencies of your project
+repositories {
+    // flatDir name:'ExternalJars', dirs:'./lib'
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+    
+    maven {
+      url 'https://dl.bintray.com/senx/maven'
+    }
+    
+    maven {
+      url 'https://dl.bintray.com/hbs/maven'
+    }
+        
+    mavenCentral()
+    
+    mavenLocal()
+    
+    maven {
+      url "http://maven.twttr.com"
+>>>>>>> dfab0a9 (wip)
     }
     newRevision = stdout.toString().trim()
   }
@@ -124,6 +165,12 @@ sourceSets {
     compileClasspath = compileClasspath + configurations.provided
   }
 }
+// for IntelliJ users
+idea {
+  module {
+    scopes.PROVIDED.plus += [configurations.provided]
+  }
+}
 
 eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
 
@@ -148,10 +195,19 @@ shadowJar {
   classifier = ''
 
   manifest {
+<<<<<<< HEAD
    attributes('WarpFleet-Description': 'Warp 10™ Zeppelin Plugin')
    attributes('WarpFleet-Group': project.ext.group)
    attributes('WarpFleet-Artifact': project.ext.name)
    attributes('WarpFleet-Version': project.ext.version)
+=======
+    attributes("Implementation-Title": "Warp 10 Zeppelin Plugin")
+    attributes("Implementation-Version": project.ext.version)
+    attributes('WarpFleet-Description': 'Integrating Warp 10™ with Apache Zeppelin')
+    attributes('WarpFleet-Group': project.ext.group )
+    attributes('WarpFleet-Artifact': project.ext.name)
+    attributes('WarpFleet-Version': project.ext.version)
+>>>>>>> dfab0a9 (wip)
   }
 
   from('src/main/warpscript') {
@@ -248,6 +304,7 @@ bintray {
   }
 }
 
+<<<<<<< HEAD
 
 //
 // Artifact Signing
@@ -258,5 +315,45 @@ signing {
     useGpgCmd()
     sign publishing.publications.uberjar
     sign publishing.publications.stdjar
+=======
+// Task for building the sources jar
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allJava
+}
+
+eclipse {
+  classpath {
+    plusConfigurations += [ configurations.provided ]
+>>>>>>> dfab0a9 (wip)
+  }
+}
+
+
+bintray {
+  dryRun = false
+
+  user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+  key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+
+  publications = project.ext.uberjar ? [ 'uberjar' ] : ['stdjar' ]
+  publish = false
+
+  pkg {
+
+    repo = project.ext.bintrayRepo
+    name = project.ext.name
+
+    if (project.hasProperty('bintrayUserOrg') || null != System.getenv('BINTRAY_USERORG')) {
+      userOrg = project.hasProperty('bintrayUserOrg') ? project.property('bintrayUserOrg') : System.getenv('BINTRAY_USERORG')
+    }
+
+    vcsUrl = project.ext.bintrayVcsUrl
+    licenses = project.ext.bintrayLicenses
+
+    version {
+      version = version
+      released = new Date()
+    }
   }
 }
