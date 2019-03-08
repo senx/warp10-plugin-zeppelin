@@ -43,7 +43,7 @@ public class ZALOAD extends NamedWarpScriptFunction implements WarpScriptStackFu
   public Object apply(WarpScriptStack stack) throws WarpScriptException {
     
     AngularObjectRegistry aor = (AngularObjectRegistry) stack.getAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_ANGULAR_REGISTRY);
-    
+        
     if (null == aor) {
       throw new WarpScriptException(getName() + " Zeppelin Angular Object Registry unset.");
     }
@@ -65,10 +65,10 @@ public class ZALOAD extends NamedWarpScriptFunction implements WarpScriptStackFu
     String noteId = bynotebook ? context.getNoteId() : null;
     String paragraphId = byparagraph ? context.getParagraphId() : null;
     
-    AngularObject obj = aor.get(noteId, paragraphId, rscname);
+    AngularObject obj = aor.get(rscname, noteId, paragraphId);
 
     if (null == obj) {
-      throw new WarpScriptException(getName() + " Zeppelin resource '" + rscname + "' not found.");
+      throw new WarpScriptException(getName() + " Zeppelin Angular resource '" + rscname + "' not found.");
     }
     
     stack.push(obj.get());
