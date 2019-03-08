@@ -1,0 +1,13 @@
+{
+  "type": "ext",
+  "group": "io.warp10",
+  "artifact": "warp10-plugin-zeppelin",
+  "version": "1.0.2",
+  "description": "Warp 10™ Zeppelin Extension",
+  "author": "SenX",
+  "email": "contact@senx.io",
+  "license": "Apache-2.0",
+  "git": "https://github.com/senx/warp10-plugin-zeppelin",
+  "tags": [ "WarpScript", "Warp 10", "Zeppelin", "Data Science" ],
+  "repoUrl": "https://dl.bintray.com/senx/maven/"
+}
