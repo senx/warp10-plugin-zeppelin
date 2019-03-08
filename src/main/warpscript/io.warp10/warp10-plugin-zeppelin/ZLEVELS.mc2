@@ -1,0 +1,65 @@
+//
+//   Copyright 2019  SenX S.A.S.
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+//
+
+{
+    'name' 'ZLEVELS'
+    'desc' 
+    <'
+Enables the processing of the stack levels at the end of the WarpScript™ code execution so that each one is returned as a separate result to Zeppelin.
+
+If this function is not called during the script, then the result returned to Zeppelin is a text representation of the JSON representing the stack.
+
+If `ZLEVELS` has been called, a list of results will be returned to Zeppelin, the first result being the one on top of the stack, and each level of the stack will be processed in the following manner.
+
+If a stack level contains anything but a STRING, the content of that level will be converted to a STRING and returned as a [text result](https://zeppelin.apache.org/docs/0.8.0/usage/display_system/basic.html#text) to Zeppelin.
+
+If a stack level contains a STRING, it will be interpreted according to its prefix:
+
+| Prefix | Processing |
+|--------|------------|
+| '`#html `' | The text after the space following `#html` will be returned as an [HTML result](https://zeppelin.apache.org/docs/0.8.0/usage/display_system/basic.html#html). |
+| '`#angular `' | The text after the space following `#angular` will be returned as an [Angular result](https://zeppelin.apache.org/docs/0.8.0/usage/display_system/angular_backend.html). |
+| '`#table `' | The text after the space is assumed to be a [table result](https://zeppelin.apache.org/docs/0.8.0/usage/display_system/basic.html#table). |
+| '`data:image/png;base64,`' | The rest of the string will be interpreted as a PNG image result. |
+
+Any other STRING will be returned as a text result.
+
+This function can only be called from WarpScript™ code executing within a Zeppelin WarpScript™ interpreter.
+    '>
+    'sig' [
+      [ [ ] [ 'id:STRING'  ] ]
+    ]
+    'params' {
+      'id' 'Notebook identifier.'
+    }
+    'examples' [
+      <'
+ZLEVELS
+      '>
+    ]
+    'related' [ ]
+    'ext' 'io.warp10.script.ext.zeppelin.ZeppelinWarpScriptExtension'
+} 'info' STORE
+
+<%
+  !$info INFO
+  SAVE 'context' STORE
+    <% 'ZLEVELS' EVAL %> <% %> <% %> TRY    
+  $context RESTORE
+%>
+'macro' STORE
+
+$macro

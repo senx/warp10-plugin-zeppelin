@@ -1,0 +1,48 @@
+//
+//   Copyright 2019  SenX S.A.S.
+//
+//   Licensed under the Apache License, Version 2.0 (the "License");
+//   you may not use this file except in compliance with the License.
+//   You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+//   Unless required by applicable law or agreed to in writing, software
+//   distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//   See the License for the specific language governing permissions and
+//   limitations under the License.
+//
+
+{
+    'name' 'ZNOTEID'
+    'desc' 
+    <'
+Pushes onto the stack the identifier of the Zeppelin notebook from which the code is executed.
+
+This function can only be called from WarpScript™ code executing within a Zeppelin WarpScript™ interpreter.
+    '>
+    'sig' [
+      [ [ ] [ 'id:STRING'  ] ]
+    ]
+    'params' {
+      'id' 'Notebook identifier.'
+    }
+    'examples' [
+      <'
+ZNOTEID
+      '>
+    ]
+    'related' [ 'ZPARAGRAPHID' ]
+    'ext' 'io.warp10.script.ext.zeppelin.ZeppelinWarpScriptExtension'
+} 'info' STORE
+
+<%
+  !$info INFO
+  SAVE 'context' STORE
+    <% 'ZNOTEID' EVAL %> <% %> <% %> TRY    
+  $context RESTORE
+%>
+'macro' STORE
+
+$macro
