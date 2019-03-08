@@ -1,5 +1,5 @@
 {
-  "type": "ext",
+  "type": "plugin",
   "group": "io.warp10",
   "artifact": "warp10-plugin-zeppelin",
   "version": "1.0.2",
