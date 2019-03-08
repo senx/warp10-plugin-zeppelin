@@ -44,7 +44,7 @@ This function can only be called from WarpScript™ code executing within a Zepp
   !$info INFO
   SAVE 'context' STORE
     <% 'ZANLOAD' EVAL %> <% %> <% %> TRY    
-  $context RES¡TORE
+  $context RESTORE
 %>
 'macro' STORE
 
