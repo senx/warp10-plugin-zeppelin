@@ -27,6 +27,8 @@ import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
 import org.apache.zeppelin.interpreter.InterpreterResult.Type;
+import org.apache.zeppelin.scheduler.Scheduler;
+import org.apache.zeppelin.scheduler.SchedulerFactory;
 import org.apache.zeppelin.interpreter.InterpreterResultMessage;
 
 import io.warp10.WarpConfig;
@@ -40,6 +42,10 @@ import io.warp10.script.ext.zeppelin.ZeppelinWarpScriptExtension;
 public class WarpScriptInterpreter extends Interpreter {
 
   private Properties properties;
+  
+  private static final String PROPERTY_SCHEDULER_NAME = "warpscript.zeppelin.scheduler.name";
+  private static final String PROPERTY_SCHEDULER_TYPE = "warpscript.zeppelin.scheduler.type";
+  private static final String PROPERTY_SCHEDULER_MAXCONCURRENCY = "warpscript.zeppelin.scheduler.maxconcurrency";
   
   static {
     try {
@@ -166,5 +172,17 @@ public class WarpScriptInterpreter extends Interpreter {
 
   @Override
   public void open() {
+  }
+  
+  @Override
+  public Scheduler getScheduler() {    
+    String type = this.properties.getOrDefault(PROPERTY_SCHEDULER_TYPE, "parallel").toString();
+    String name = this.properties.getOrDefault(PROPERTY_SCHEDULER_NAME, "WarpScriptZeppelinScheduler").toString();
+    int maxconcurrency = Integer.parseInt(this.properties.getOrDefault(PROPERTY_SCHEDULER_MAXCONCURRENCY, "128").toString());
+    if ("FIFO".equalsIgnoreCase(type)) {
+      return SchedulerFactory.singleton().createOrGetFIFOScheduler(name);
+    } else {
+      return SchedulerFactory.singleton().createOrGetParallelScheduler(name, maxconcurrency);
+    }
   }
 }
