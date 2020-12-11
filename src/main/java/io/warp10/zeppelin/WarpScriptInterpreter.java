@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import io.warp10.ThrowableUtils;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
@@ -163,11 +164,11 @@ public class WarpScriptInterpreter extends Interpreter {
           return new InterpreterResult(Code.SUCCESS, Type.TEXT, json.toString());
         }
       }      
-    } catch (WarpScriptException wse) {
-      error = wse;
-    }        
-    
-    return new InterpreterResult(Code.ERROR, Type.TEXT, error.getMessage());
+    } catch (WarpScriptException | IOException e) {
+      error = e;
+    }
+
+    return new InterpreterResult(Code.ERROR, Type.TEXT, ThrowableUtils.getErrorMessage(error));
   }
 
   @Override
