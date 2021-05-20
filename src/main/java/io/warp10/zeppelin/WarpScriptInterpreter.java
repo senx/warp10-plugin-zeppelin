@@ -163,7 +163,7 @@ public class WarpScriptInterpreter extends Interpreter {
           return new InterpreterResult(Code.SUCCESS, Type.TEXT, json.toString());
         }
       }      
-    } catch (WarpScriptException wse) {
+    } catch (WarpScriptException | IOException wse) {
       error = wse;
     }        
     
