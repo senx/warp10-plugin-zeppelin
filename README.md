@@ -1,7 +1,5 @@
 # Integrating Warp 10™ with Apache Zeppelin
 
-This content is identical to the one available on [the Warp 10™ website](https://warp10.io/content/05_Ecosystem/04_Data_Science/03_Integrating_With_Zeppelin).
-
 ## Overview
 
 [Apache Zeppelin](https://zeppelin.apache.org/) is a web based notebook tool for data analysis.
