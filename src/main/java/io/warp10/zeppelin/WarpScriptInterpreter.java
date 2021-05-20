@@ -66,7 +66,10 @@ public class WarpScriptInterpreter extends Interpreter {
   
   public WarpScriptInterpreter(Properties properties) {
     super(properties);
-    this.properties = properties;
+    // Retrieve Warp 10 properties
+    this.properties = WarpConfig.getProperties();
+    // Override properties with those from the constructor
+    this.properties.putAll(properties);
   }
   
   @Override
@@ -79,6 +82,7 @@ public class WarpScriptInterpreter extends Interpreter {
 
   @Override
   public FormType getFormType() {
+    System.out.println(">>> getFormType");
     return FormType.SIMPLE;
   }
 
@@ -89,20 +93,15 @@ public class WarpScriptInterpreter extends Interpreter {
 
   @Override
   public InterpreterResult interpret(String script, InterpreterContext context) {
-
-    Properties properties = WarpConfig.getProperties();
+try {
+    MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), this.properties);
     
-    // Override properties with those from the interpreter
-    properties.putAll(this.properties);
-    
-    MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), properties);
-    
-    if ("true".equals(properties.getProperty(ZeppelinWarp10Plugin.ZEPPELIN_STACK_MAXLIMITS))) {
+    if ("true".equals(this.properties.getProperty(ZeppelinWarp10Plugin.ZEPPELIN_STACK_MAXLIMITS))) {
       stack.maxLimits();
     }
     
     Throwable error = null;
-    
+
     stack.setAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_INTERPRETER_CONTEXT, context);
     stack.setAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_RESOURCE_POOL, context.getResourcePool());
     stack.setAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_ANGULAR_REGISTRY, context.getAngularObjectRegistry());
@@ -142,6 +141,12 @@ public class WarpScriptInterpreter extends Interpreter {
               } else if (str.startsWith("data:image/png;base64,")) {
                 type = Type.IMG;
                 data = str.substring(22);
+              } else if (str.startsWith("#network ")) {
+                type = Type.NETWORK;
+                data = str.substring(9);
+              } else if (str.startsWith("#svg ")) {
+                type = Type.SVG;
+                data = str.substring(5);
               } else {
                 type = Type.TEXT;
                 data = str;
@@ -162,12 +167,18 @@ public class WarpScriptInterpreter extends Interpreter {
           StackUtils.toJSON(out, stack);
           return new InterpreterResult(Code.SUCCESS, Type.TEXT, json.toString());
         }
-      }      
+      }   
+    } catch (IOException ioe) {
+      error = new WarpScriptException("Error while interpreting.", ioe);
     } catch (WarpScriptException wse) {
       error = wse;
     }        
     
     return new InterpreterResult(Code.ERROR, Type.TEXT, error.getMessage());
+} catch (Throwable t) {
+  t.printStackTrace();
+  throw t;
+}
   }
 
   @Override

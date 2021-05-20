@@ -16,6 +16,7 @@
 package io.warp10.script.ext.zeppelin;
 
 import org.apache.zeppelin.interpreter.InterpreterContext;
+import org.apache.zeppelin.resource.DistributedResourcePool;
 import org.apache.zeppelin.resource.Resource;
 import org.apache.zeppelin.resource.ResourcePool;
 
@@ -64,7 +65,7 @@ public class ZLOAD extends NamedWarpScriptFunction implements WarpScriptStackFun
 
     String noteId = bynotebook ? context.getNoteId() : null;
     String paragraphId = byparagraph ? context.getParagraphId() : null;
-    
+        
     Resource rsc = rp.get(noteId, paragraphId, rscname);
 
     if (null == rsc) {

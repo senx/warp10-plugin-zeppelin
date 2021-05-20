@@ -70,7 +70,6 @@ public class ZSTORE extends NamedWarpScriptFunction implements WarpScriptStackFu
     } else {
       rp.remove(noteId, paragraphId, rscname);
     }
-    
     return stack;
   }
 
