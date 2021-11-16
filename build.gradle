@@ -1,5 +1,5 @@
 //
-//   Copyright 2019  SenX S.A.S.
+//   Copyright 2019-2021  SenX S.A.S.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -52,7 +52,8 @@ dependencies {
   //
   // Insert your dependencies here
   //
-  implementation 'org.apache.zeppelin:zeppelin-interpreter:0.8.0'
+  //compile group: 'GROUP', name: 'NAME', version: 'VERSION'
+  implementation 'org.apache.zeppelin:zeppelin-interpreter:0.9.0'
 
   testImplementation 'io.warp10:warpscript:+'
   testImplementation 'junit:junit:4.12'

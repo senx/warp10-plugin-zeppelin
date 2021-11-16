@@ -1,5 +1,5 @@
 //
-//   Copyright 2018  SenX S.A.S.
+//   Copyright 2018-2021  SenX S.A.S.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -21,17 +21,17 @@ import java.util.Map;
 import io.warp10.warp.sdk.WarpScriptExtension;
 
 public class ZeppelinWarpScriptExtension extends WarpScriptExtension {
-  
+
   private static final Map<String,Object> functions;
-  
+
   public static final String ATTRIBUTE_ZEPPELIN_RESOURCE_POOL = "zeppelin.resource.pool";
   public static final String ATTRIBUTE_ZEPPELIN_INTERPRETER_CONTEXT = "zeppelin.interpreter.context";
   public static final String ATTRIBUTE_ZEPPELIN_ANGULAR_REGISTRY = "zeppelin.angular.registry";
   public static final String ATTRIBUTE_ZEPPELIN_LEVELS = "zeppelin.levels";
-  
+
   static {
     functions = new HashMap<String,Object>();
-    
+
     functions.put("ZLOAD", new ZLOAD("ZLOAD", false, false));
     functions.put("ZSTORE", new ZSTORE("ZSTORE", false, false));
     functions.put("ZNLOAD", new ZLOAD("ZNLOAD", true, false));
@@ -48,7 +48,7 @@ public class ZeppelinWarpScriptExtension extends WarpScriptExtension {
     functions.put("ZPARAGRAPHID", new ZPARAGRAPHID("ZPARAGRAPHID"));
     functions.put("ZLEVELS", new ZLEVELS("ZLEVELS"));
   }
-  
+
   @Override
   public Map<String, Object> getFunctions() {
     return functions;

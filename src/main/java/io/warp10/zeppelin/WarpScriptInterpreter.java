@@ -27,9 +27,9 @@ import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
 import org.apache.zeppelin.interpreter.InterpreterResult.Type;
+import org.apache.zeppelin.interpreter.InterpreterResultMessage;
 import org.apache.zeppelin.scheduler.Scheduler;
 import org.apache.zeppelin.scheduler.SchedulerFactory;
-import org.apache.zeppelin.interpreter.InterpreterResultMessage;
 
 import io.warp10.WarpConfig;
 import io.warp10.plugins.zeppelin.ZeppelinWarp10Plugin;
@@ -68,7 +68,10 @@ public class WarpScriptInterpreter extends Interpreter {
 
   public WarpScriptInterpreter(Properties properties) {
     super(properties);
-    this.properties = properties;
+    // Retrieve Warp 10 properties
+    this.properties = WarpConfig.getProperties();
+    // Override properties with those from the constructor
+    this.properties.putAll(properties);
   }
 
   @Override
@@ -81,6 +84,7 @@ public class WarpScriptInterpreter extends Interpreter {
 
   @Override
   public FormType getFormType() {
+    System.out.println(">>> getFormType");
     return FormType.SIMPLE;
   }
 
@@ -91,17 +95,13 @@ public class WarpScriptInterpreter extends Interpreter {
 
   @Override
   public InterpreterResult interpret(String script, InterpreterContext context) {
+try {
+    MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), this.properties);
 
-    Properties properties = WarpConfig.getProperties();
-
-    // Override properties with those from the interpreter
-    properties.putAll(this.properties);
-
-    MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), properties);
     String name = "[Warp 10 Zeppelin Interpreter - " + context.getNoteId() + "/" + context.getParagraphId() + "/" + context.getReplName() + "/" + context.getParagraphTitle() + "]";
     stack.setAttribute(WarpScriptStack.ATTRIBUTE_NAME, name);
 
-    if ("true".equals(properties.getProperty(ZeppelinWarp10Plugin.ZEPPELIN_STACK_MAXLIMITS))) {
+    if ("true".equals(this.properties.getProperty(ZeppelinWarp10Plugin.ZEPPELIN_STACK_MAXLIMITS))) {
       stack.maxLimits();
     }
 
@@ -146,6 +146,12 @@ public class WarpScriptInterpreter extends Interpreter {
               } else if (str.startsWith("data:image/png;base64,")) {
                 type = Type.IMG;
                 data = str.substring(22);
+              } else if (str.startsWith("#network ")) {
+                type = Type.NETWORK;
+                data = str.substring(9);
+              } else if (str.startsWith("#svg ")) {
+                type = Type.SVG;
+                data = str.substring(5);
               } else {
                 type = Type.TEXT;
                 data = str;
@@ -174,6 +180,10 @@ public class WarpScriptInterpreter extends Interpreter {
     }
 
     return new InterpreterResult(Code.ERROR, Type.TEXT, error.getMessage());
+} catch (Throwable t) {
+  t.printStackTrace();
+  throw t;
+}
   }
 
   @Override
