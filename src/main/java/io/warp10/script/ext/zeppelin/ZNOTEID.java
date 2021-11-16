@@ -1,5 +1,5 @@
 //
-//   Copyright 2018  SenX S.A.S.
+//   Copyright 2018-2021  SenX S.A.S.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -29,18 +29,18 @@ public class ZNOTEID extends NamedWarpScriptFunction implements WarpScriptStackF
   public ZNOTEID(String name) {
     super(name);
   }
-  
+
   @Override
   public Object apply(WarpScriptStack stack) throws WarpScriptException {
-    
+
     InterpreterContext context = (InterpreterContext) stack.getAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_INTERPRETER_CONTEXT);
-    
+
     if (null == context) {
       throw new WarpScriptException(getName() + " Zeppelin Interpreter Context unset.");
     }
-    
+
     stack.push(context.getNoteId());
-    
+
     return stack;
   }
 

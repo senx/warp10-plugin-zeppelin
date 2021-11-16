@@ -1,5 +1,5 @@
 //
-//   Copyright 2018  SenX S.A.S.
+//   Copyright 2018-2021  SenX S.A.S.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
 import org.apache.zeppelin.interpreter.InterpreterResult.Type;
+import org.apache.zeppelin.interpreter.InterpreterResultMessage;
 import org.apache.zeppelin.scheduler.Scheduler;
 import org.apache.zeppelin.scheduler.SchedulerFactory;
-import org.apache.zeppelin.interpreter.InterpreterResultMessage;
 
 import io.warp10.WarpConfig;
 import io.warp10.plugins.zeppelin.ZeppelinWarp10Plugin;
@@ -42,11 +42,11 @@ import io.warp10.script.ext.zeppelin.ZeppelinWarpScriptExtension;
 public class WarpScriptInterpreter extends Interpreter {
 
   private Properties properties;
-  
+
   private static final String PROPERTY_SCHEDULER_NAME = "warpscript.zeppelin.scheduler.name";
   private static final String PROPERTY_SCHEDULER_TYPE = "warpscript.zeppelin.scheduler.type";
   private static final String PROPERTY_SCHEDULER_MAXCONCURRENCY = "warpscript.zeppelin.scheduler.maxconcurrency";
-  
+
   static {
     try {
       if (null != System.getProperty(WarpConfig.WARP10_CONFIG)) {
@@ -60,10 +60,10 @@ public class WarpScriptInterpreter extends Interpreter {
         WarpScriptLib.registerExtensions();
         WarpScriptLib.register(new ZeppelinWarpScriptExtension());
       }
-    } catch (IOException ioe) {      
+    } catch (IOException ioe) {
     }
   }
-  
+
   public WarpScriptInterpreter(Properties properties) {
     super(properties);
     // Retrieve Warp 10 properties
@@ -71,7 +71,7 @@ public class WarpScriptInterpreter extends Interpreter {
     // Override properties with those from the constructor
     this.properties.putAll(properties);
   }
-  
+
   @Override
   public void cancel(InterpreterContext context) {
   }
@@ -95,19 +95,19 @@ public class WarpScriptInterpreter extends Interpreter {
   public InterpreterResult interpret(String script, InterpreterContext context) {
 try {
     MemoryWarpScriptStack stack = new MemoryWarpScriptStack(ZeppelinWarp10Plugin.getExposedStoreClient(), ZeppelinWarp10Plugin.getExposedDirectoryClient(), this.properties);
-    
+
     if ("true".equals(this.properties.getProperty(ZeppelinWarp10Plugin.ZEPPELIN_STACK_MAXLIMITS))) {
       stack.maxLimits();
     }
-    
+
     Throwable error = null;
 
     stack.setAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_INTERPRETER_CONTEXT, context);
     stack.setAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_RESOURCE_POOL, context.getResourcePool());
     stack.setAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_ANGULAR_REGISTRY, context.getAngularObjectRegistry());
-    
+
     try {
-      stack.execMulti(script);     
+      stack.execMulti(script);
     } catch (Throwable t) {
       error = t;
     }
@@ -116,19 +116,19 @@ try {
 
       if (null == error) {
         if (Boolean.TRUE.equals(stack.getAttribute(ZeppelinWarpScriptExtension.ATTRIBUTE_ZEPPELIN_LEVELS))) {
-          
+
           List<InterpreterResultMessage> results = new ArrayList<InterpreterResultMessage>();
-          
+
           for (int i = 0; i < stack.depth(); i++) {
             Object obj = stack.get(i);
-            
+
             Type type = Type.NULL;
-            
+
             String data = null;
-            
+
             if (obj instanceof String) {
               String str = String.valueOf(obj);
-              
+
               if (str.startsWith("#html ")) {
                 type = Type.HTML;
                 data = str.substring(6);
@@ -155,25 +155,25 @@ try {
               type = Type.TEXT;
               data = String.valueOf(obj);
             }
-            
+
             results.add(new InterpreterResultMessage(type, data));
           }
-          
+
           return new InterpreterResult(Code.SUCCESS, results);
         } else {
           StringWriter json = new StringWriter();
           PrintWriter out = new PrintWriter(json);
-                
+
           StackUtils.toJSON(out, stack);
           return new InterpreterResult(Code.SUCCESS, Type.TEXT, json.toString());
         }
-      }   
+      }
     } catch (IOException ioe) {
       error = new WarpScriptException("Error while interpreting.", ioe);
     } catch (WarpScriptException wse) {
       error = wse;
-    }        
-    
+    }
+
     return new InterpreterResult(Code.ERROR, Type.TEXT, error.getMessage());
 } catch (Throwable t) {
   t.printStackTrace();
@@ -184,9 +184,9 @@ try {
   @Override
   public void open() {
   }
-  
+
   @Override
-  public Scheduler getScheduler() {    
+  public Scheduler getScheduler() {
     String type = this.properties.getOrDefault(PROPERTY_SCHEDULER_TYPE, "parallel").toString();
     String name = this.properties.getOrDefault(PROPERTY_SCHEDULER_NAME, "WarpScriptZeppelinScheduler").toString();
     int maxconcurrency = Integer.parseInt(this.properties.getOrDefault(PROPERTY_SCHEDULER_MAXCONCURRENCY, "128").toString());
